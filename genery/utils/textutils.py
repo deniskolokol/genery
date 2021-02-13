@@ -17,6 +17,7 @@ from .containers import distinct_elements
 RE_SPACES = re.compile(r'\s+')
 RE_DIGITS = re.compile(r'\d+')
 RE_SPECIALSYMB = re.compile(r'[^a-zA-Z0-9]')
+RE_NOLETTERS = re.compile(r'[^a-zA-Z]')
 RE_AZ09 = re.compile(r'[^a-zA-Z0-9/]')
 RE_URLS = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
 
@@ -38,7 +39,7 @@ LATIN_MAP = {
     u'û': 'u', u'ü': 'u', u'ű': 'u', u'ý': 'y', u'þ': 'th', u'ÿ': 'y'
     }
 LATIN_SYMBOLS_MAP = {
-    u'©':'(c)'
+    u'©':'(c)',
     }
 GREEK_MAP = {
     u'α':'a', u'β':'b', u'γ':'g', u'δ':'d', u'ε':'e', u'ζ':'z', u'η':'h',
@@ -88,7 +89,6 @@ LATVIAN_MAP = {
     u'Ģ':'G', u'Ī':'i', u'Ķ':'k', u'Ļ':'L', u'Ņ':'N', u'Š':'S', u'Ū':'u',
     u'Ž':'Z'
     }
-
 
 def _make_regex():
     downcode_maps = {}
@@ -143,14 +143,17 @@ def remove_nontext(text):
         mapings, _ = _make_regex()
         symbols = list(mapings.keys())
         symbols = u"".join(symbols)
+
+        # Basic allowed symbols.
         _ACCEPTED = symbols + ascii_letters + digits + punctuation
+
+        # Additional allowed symbols.
+        _ACCEPTED += "„”–—"
 
     result = ""
     for piece in text:
         if (piece in _ACCEPTED) or (piece in [" ", "\n", "\r"]):
             result += piece
-        else:
-            pass
 
     return result
 
