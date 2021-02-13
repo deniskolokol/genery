@@ -329,6 +329,21 @@ class TestTextUtils(unittest.TestCase):
             "Let us know if?"
             )
 
+    def test_downcode(self):
+        text = "Farming in Flanders is large-scale and intensive:"
+        self.assertEqual(textutils.downcode(text), text)
+
+        text = "Чому я не сокіл, чому не літаю"
+        self.assertEqual(
+            textutils.downcode(text),
+            "Chomu ya ne sokil, chomu ne litayu"
+            )
+        text = 'Reģionālās attīstības un pašvaldību lietu ministrijas uzdevumā.'
+        self.assertEqual(
+            textutils.downcode(text),
+            "Regionalas attistibas un pasvaldibu lietu ministrijas uzdevuma."
+            )
+
     def test__URLNormalizer(self):
         url = 'https://example.com/app/page1/?limit=32&query#image'
         normalized = textutils.URLNormalizer(url)
@@ -345,7 +360,21 @@ class TestTextUtils(unittest.TestCase):
         self.assertEqual(normalized.domain_name, '')
         self.assertEqual(normalized.uri, '')
 
-    def test__TextCleaner(self):
+    def test__TextCleaner__cleanup_hard(self):
+        text = '...COVID-19 lockdown. https://t.co/efBUX6mydx https://t.co/MCtU22fJ5p'
+        self.assertEqual(
+            textutils.TextCleaner(text).cleanup_hard(),
+            'COVID lockdown https t co efBUXmydx https t co MCtUfJp'
+            )
+
+        text = '[#1] Reģionālās attīstības un pašvaldību lietu ministrijas uzdevumā.*'
+        self.assertEqual(textutils.TextCleaner(text).cleanup_hard(),
+            'Regionalas attistibas un pasvaldibu lietu ministrijas uzdevuma')
+
+        self.assertEqual(textutils.TextCleaner("[69]").cleanup_hard(), '')
+
+
+    def test__TextCleaner__extract_urls(self):
         text = 'These penguins took a stroll through the quiet streets of Cape Town as residents in South Africa self-isolate amid COVID-19 lockdown. https://t.co/efBUX6mydx https://t.co/MCtU22fJ5p'
         self.assertEqual(
             textutils.TextCleaner(text).extract_urls(),
