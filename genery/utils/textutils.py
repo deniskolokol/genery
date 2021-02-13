@@ -8,7 +8,7 @@ import uuid
 import hmac
 import random
 from hashlib import md5
-from string import ascii_lowercase, digits, punctuation
+from string import ascii_lowercase, ascii_letters, digits, punctuation
 from itertools import groupby
 from urllib import parse
 
@@ -23,6 +23,7 @@ RE_URLS = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9
 
 _MAPINGS = None
 _REGEX = None
+_ACCEPTED = None
 LATIN_MAP = {
     u'À': 'A', u'Á': 'A', u'Â': 'A', u'Ã': 'A', u'Ä': 'A', u'Å': 'A',
     u'Æ': 'AE', u'Ç':'C', u'È': 'E', u'É': 'E', u'Ê': 'E', u'Ë': 'E',
@@ -129,6 +130,29 @@ def downcode(text):
             downcoded += piece
 
     return downcoded
+
+
+def remove_nontext(text):
+    """
+    :param text: <str>
+    :return: <str>
+    """
+    global _ACCEPTED
+
+    if not _ACCEPTED:
+        mapings, _ = _make_regex()
+        symbols = list(mapings.keys())
+        symbols = u"".join(symbols)
+        _ACCEPTED = symbols + ascii_letters + digits + punctuation
+
+    result = ""
+    for piece in text:
+        if (piece in _ACCEPTED) or (piece in [" ", "\n", "\r"]):
+            result += piece
+        else:
+            pass
+
+    return result
 
 
 def generate_key(*values, delimiter='_'):

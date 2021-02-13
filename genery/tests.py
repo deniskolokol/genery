@@ -329,7 +329,7 @@ class TestTextUtils(unittest.TestCase):
             "Let us know if?"
             )
 
-    def test_downcode(self):
+    def test__downcode(self):
         text = "Farming in Flanders is large-scale and intensive:"
         self.assertEqual(textutils.downcode(text), text)
 
@@ -342,6 +342,13 @@ class TestTextUtils(unittest.TestCase):
         self.assertEqual(
             textutils.downcode(text),
             "Regionalas attistibas un pasvaldibu lietu ministrijas uzdevuma."
+            )
+
+    def test__remove_nontext(self):
+        text = """ Sitran selvityksiä 52 Maaseutu tulevaisuuden merkitysyhteiskunnassa Trendianalyysi Kati Hienonen [*123] ls/"""
+        self.assertEqual(
+            textutils.remove_nontext(text),
+            """ Sitran selvityksiä 52 Maaseutu tulevaisuuden merkitysyhteiskunnassa Trendianalyysi Kati Hienonen [*123] ls/"""
             )
 
     def test__URLNormalizer(self):
