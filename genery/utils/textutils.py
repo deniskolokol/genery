@@ -286,6 +286,7 @@ class TextCleaner:
 
 class URLNormalizer:
     def __init__(self, url, **kwargs):
+        self.url = url
         self._parsed = parse.urlparse(url)
         self._uri = ''
         self._domain = ''
@@ -310,3 +311,12 @@ class URLNormalizer:
     @property
     def is_valid(self):
         return all([self.parsed.scheme, self.parsed.netloc, self.parsed.path])
+
+    @property
+    def ascii(self):
+        url = parse.urlsplit(self.url)
+        url = list(url)
+        url[1] = url[1].encode('idna').decode("utf-8")
+        url[2] = parse.quote(url[2])
+
+        return parse.urlunsplit(url)

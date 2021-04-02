@@ -367,6 +367,14 @@ class TestTextUtils(unittest.TestCase):
         self.assertEqual(normalized.domain_name, '')
         self.assertEqual(normalized.uri, '')
 
+        url = "http://test.eu/policy-is-the-“emperor-naked”/"
+        normalized = textutils.URLNormalizer(url)
+        self.assertEqual(normalized.ascii, "http://test.eu/policy-is-the-%E2%80%9Cemperor-naked%E2%80%9D/")
+
+        url = "https://examplę.com/bukwaə"
+        normalized = textutils.URLNormalizer(url)
+        self.assertEqual(normalized.ascii, "https://xn--exampl-14a.com/bukwa%C9%99")
+
     def test__TextCleaner__cleanup_hard(self):
         text = '...COVID-19 lockdown. https://t.co/efBUX6mydx https://t.co/MCtU22fJ5p'
         self.assertEqual(
