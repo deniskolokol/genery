@@ -212,6 +212,33 @@ def smart_truncate(text, limit=100, suffix='...'):
     return text[:limit].rsplit(' ', 1)[0]+suffix
 
 
+def smart_split(text, limit=100):
+    """
+    A generator that splits `text` to lines with each line
+    not exceeding `limit`.
+
+    :param text: <str>
+    :param limit: <int>
+    """
+    prefix = ""
+    while text:
+        chunk = text[:limit]
+        text = text[limit:]
+
+        if not any(chunk.endswith(x) for x in [" ", "\t", "\n"]):
+            try:
+                chunk, prefix = chunk.rsplit(maxsplit=1)
+            except ValueError:
+                pass
+            else:
+                text = prefix + text
+                if len(" ".join([chunk, text])) <= limit:
+                    chunk = " ".join([chunk, text])
+                    text = ""
+
+        yield chunk.strip()
+
+
 class TextCleaner:
     """A simple text cleaning util."""
     def __init__(self, text):

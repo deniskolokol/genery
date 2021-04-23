@@ -329,6 +329,20 @@ class TestTextUtils(unittest.TestCase):
             "Let us know if?"
             )
 
+    def test__smart_split(self):
+        text = "Are you pleased with the results you get by using the equipment and materials? Are you pleased with the results you get by applying the techniques? Are the costs involved in the improvements incurred by you? Do they add enough value worth. the costs incurred? Who provides you with the knowledge you need in order to do your work? Do you have easy access to that knowledge?"
+        self.assertEqual([x for x in textutils.smart_split(text, limit=50)], [
+            "Are you pleased with the results you get by using",
+            "the equipment and materials? Are you pleased with",
+            "the results you get by applying the techniques?",
+            "Are the costs involved in the improvements",
+            "incurred by you? Do they add enough value worth.",
+            "the costs incurred? Who provides you with the",
+            "knowledge you need in order to do your work? Do",
+            "you have easy access to that knowledge?"
+        ])
+        self.assertTrue(all(len(x) <= 100 for x in textutils.smart_split(text)))
+
     def test__downcode(self):
         text = "Farming in Flanders is large-scale and intensive:"
         self.assertEqual(textutils.downcode(text), text)
