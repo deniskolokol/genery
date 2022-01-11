@@ -5,7 +5,7 @@
 import re
 import json
 from datetime import datetime
-from collections import Mapping, MutableMapping
+from collections.abc import Mapping, MutableMapping
 
 
 class RecordDict(dict):
