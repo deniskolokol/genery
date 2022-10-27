@@ -321,7 +321,7 @@ class URLNormalizer:
         if self.is_valid:
             self._uri = url
             self._domain = '{uri.scheme}://{uri.netloc}/'.format(uri=self._parsed)
-            self._domain_name = re.sub('.*w\.', '', self._parsed.netloc, 1)
+            self._domain_name = re.sub(r'.*w\.', '', self._parsed.netloc, 1)
 
     @property
     def domain(self): return self._domain
