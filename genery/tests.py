@@ -105,6 +105,22 @@ class TestUtilsRecordDictMethods(unittest.TestCase):
         paths = ["place.location.xyz", "gorgonzola", "place.belongsto", "wu"]
         self.assertEqual(obj.lookup(*paths), ["Europe"])
 
+    def test__update_path(self):
+        obj = containers.RecordDict(**self.text_dict)
+
+        obj.update_path("lang.iso", "ENG")
+        self.assertEqual(obj.lookup("lang.iso"), "ENG")
+        self.assertEqual(obj["lang"]["iso"], "ENG")
+        paths = ["lang.iso", "lang.fizo", "place.shizo", "wu"]
+        self.assertEqual(obj.lookup(*paths), "ENG")
+
+        obj.update_path("new_key", "test")
+        self.assertEqual(obj["new_key"], "test")
+
+        obj.update_path("place:location:pointer", self, delimiter=':')
+        data = obj.lookup("place/location/pointer", delimiter="/")
+        self.assertEqual(data.__class__.__name__, 'TestUtilsRecordDictMethods')
+
     def test__from_list(self):
         obj = containers.RecordDict.from_list(
             self.test_list_if_nested_dicts,

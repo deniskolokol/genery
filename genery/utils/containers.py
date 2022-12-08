@@ -237,6 +237,48 @@ class RecordDict(dict):
         """Override .update() with the behavior of deep_update."""
         deep_update(self, new_dict)
 
+    def make_path(self, data, *paths):
+        while paths:
+            key, *paths = paths
+            if len(paths) == 1:
+                data = data.setdefault(key, paths[0])
+                return data
+
+            data = data.setdefault(key, {})
+
+    def update_path(self, path, value, delimiter='.'):
+        """
+        Updates `self` by given path and delimiter (utilizing
+        `self.make_path` and `self.update`, i.e. deep update
+        without disrupting the structure).
+
+        Example:
+        In [1]: data = RecordDict(**{
+            'created_at': {
+                'gte': datetime.datetime.now().isoformat()
+                }
+            })
+        In [2]: data.update_path('created_at.lt',
+                                 datetime.datetime.now().isoformat())
+        In [3]: print(data)
+        Out[3]: {
+            'created_at': {
+                'gte': '2022-12-08T12:45:45.095207',
+                'lt': '2022-12-08T12:46:41.134788'
+                }
+            }
+
+        :param path: <str>
+        :param value: <Any>
+        :param delimiter: <str>
+        """
+        paths = path.split(delimiter)
+        paths.append(value)
+        result = {}
+        self.make_path(result, *paths)
+        result = self._objectify_recoursive(result)
+        self.update(result)
+
 
 def objectify(method):
     """Decorator that converts <dict> to instance of <RecordDict>."""
