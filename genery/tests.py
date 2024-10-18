@@ -449,9 +449,12 @@ class TestCalcs(unittest.TestCase):
         self.assertEqual(out, {'cs': 1, 'sk': 4, 'fi': 28, 'en': 167})
         self.assertEqual(sum(out.values()), maximum)
 
+        # When comparing results of floating point math,
+        # account for leftovers - use AlmostEqual instead of Equal.
+        # See https://0.30000000000000004.com/ for details.
         out_ = calcs.rescale(in_, float(maximum))
         self.assertTrue(all(isinstance(x, float) for x in out_.values()))
-        self.assertEqual(sum(out_.values()), float(maximum))
+        self.assertAlmostEqual(sum(out_.values()), float(maximum), 13)
 
         out_ = calcs.rescale(in_, 10)
         self.assertEqual(out_, {'sk': 0, 'cs': 0, 'fi': 1, 'en': 9})

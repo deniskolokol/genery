@@ -4,8 +4,8 @@
 
 import re
 import json
+import collections
 from datetime import datetime
-from collections.abc import Mapping, MutableMapping
 
 
 class RecordDict(dict):
@@ -344,7 +344,7 @@ def flatten_dict(dict_, parent_key='', separator='_'):
     items = []
     for key, val in dict_.items():
         new_key = '{0}{1}{2}'.format(parent_key, separator, key) if parent_key else key
-        if isinstance(val, MutableMapping):
+        if isinstance(val, collections.abc.MutableMapping):
             items.extend(
                 flatten_dict(val, new_key, separator=separator).items()
                 )
@@ -411,7 +411,7 @@ def deep_update(source, overrides):
     Modifies `source` in place.
     """
     for key, value in overrides.items():
-        if isinstance(value, Mapping) and value:
+        if isinstance(value, collections.abc.Mapping) and value:
             returned = deep_update(source.get(key, {}), value)
             source[key] = returned
         else:
